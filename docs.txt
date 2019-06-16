@@ -50,6 +50,10 @@
 	    "font_size": 11,
 	    "highlight_line": true,
 	    "index_files": true,
+	    "ignored_packages":
+		[
+			"Vintage"
+		],
 	    "rulers":
 	    [
 		80
