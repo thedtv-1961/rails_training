@@ -1,0 +1,22 @@
+
+1/ Macro:
+	- rails [_version_] new app_name # command to create new project with name “app_name”
+	➢ bundle install # install all gem in project
+	➢ bundle update # update to the newest version of gem
+	➢ rails server or rails s # run server
+	=========
+	+ create migrate: rails generate migration CreateUsers name:string email:string
+	+ edit migrate: rails generate migration AddDetailsToUsers phone_number:string age:integer
+	=======
+	+ scafford: rails generate scaffold User name:string email:string # create model User with controller, view, model ... 
+	+ create controller: rails generate controller StaticPages home help
+	+ create model: bin/rails generate model User name:string email:string
+	+ create resource: rails generate resource Post name:string content:text
+	+ crete healper: rails generate -h
+	=====
+	+ migrate: rails db:migrate or bundle exec rake db:migrate # migrate model
+	+ migrate to specific version: rails db:migrate VERSION=20170306120000
+	+ rollback: rails db:rollback
+	+ setp database: rails db:setup
+	+ reset database: rails db:migrate:reset
+	+ seed data: rails db:seed
