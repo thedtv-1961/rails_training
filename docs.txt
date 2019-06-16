@@ -43,24 +43,25 @@
 	}
 	Comunity:
 	{
-	    "auto_complete": true,
-	    "auto_complete_commit_on_tab": true,
-	    "copy_with_empty_selection": true,
-	    "ensure_newline_at_eof_on_save": true,
-	    "font_size": 11,
-	    "highlight_line": true,
-	    "index_files": true,
-	    "ignored_packages":
-		[
-			"Vintage"
-		],
-	    "rulers":
-	    [
+	"auto_complete": true,
+	"auto_complete_commit_on_tab": true,
+	"copy_with_empty_selection": true,
+	"ensure_newline_at_eof_on_save": true,
+	"font_size": 11,
+	"highlight_line": true,
+	"index_files": true,
+	"ignored_packages":
+	[
+		"Vintage"
+	],
+	"rulers":
+	[
 		80
-	    ],
-	    "show_encoding": true,
-	    "show_line_endings": true,
-	    "tab_size": 2,
-	    "translate_tabs_to_spaces": true,
-	    "trim_trailing_white_space_on_save": true
-	}
+	],
+	"show_encoding": true,
+	"show_line_endings": true,
+	"tab_size": 2,
+	"translate_tabs_to_spaces": true,
+	"trim_trailing_white_space_on_save": true
+}
+
