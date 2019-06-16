@@ -65,30 +65,3 @@
 	"trim_trailing_white_space_on_save": true
 }
 
-3/ MySQL status:
-
-	use DBngin app to check the status
-	sudo /usr/local/mysql/support-files/mysql.server start
-	sudo /usr/local/mysql/support-files/mysql.server stop
-	sudo /usr/local/mysql/support-files/mysql.server restart
-
-	or
-
-	 sudo launchctl load -F /Library/LaunchDaemons/com.oracle.oss.mysql.mysqld.plist
-		sudo launchctl unload -F /Library/LaunchDaemons/com.oracle.oss.mysql.mysqld.plist
-
-
-	Linux:
-
-	On Linux start/stop from the command line:
-		/etc/init.d/mysqld start
-		/etc/init.d/mysqld stop
-		/etc/init.d/mysqld restart
-	Some Linux flavours offer the service command too
-		service mysqld start
-		service mysqld stop
-		service mysqld restart
-	or
-		service mysql start
-		service mysql stop
-		service mysql restart
