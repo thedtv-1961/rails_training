@@ -20,3 +20,24 @@
 	+ setp database: rails db:setup
 	+ reset database: rails db:migrate:reset
 	+ seed data: rails db:seed
+2/ Sublime config:
+	Preference -> Setting User
+
+	{
+		"ensure_newline_at_eof_on_save": true,
+		"font_size": 11,
+		"highlight_line": true,
+		"ignored_packages":
+		[
+			"Vintage"
+		],
+		"rulers":
+		[
+			80
+		],
+		"show_encoding": true,
+		"show_line_endings": true,
+		"tab_size": 2,
+		"translate_tabs_to_spaces": true,
+		"trim_trailing_white_space_on_save": true
+	}
