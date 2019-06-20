@@ -5,6 +5,7 @@ Model lifecycle trong slide 6 co noi, update_attributes vs update_attribute, Fin
 index trong sql, 1 talbe dc tao bao nhieu index???
 Some available callbacks: slide 6 page 18
 cross-site request forgery (CSRF) la gi
+ten cac memthods test trong rails
 
 ===================================
 delete: bundle exec rubocop
