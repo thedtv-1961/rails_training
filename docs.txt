@@ -1,3 +1,14 @@
+??????????????????
+class inherit conmtroller, moidel, test, ... coi chpter3,4,5 co 2 cai hinh
+terminal on macos to 1 form many tabs
+Model lifecycle trong slide 6 co noi, update_attributes vs update_attribute, Find vs Find_by
+index trong sql, 1 talbe dc tao bao nhieu index???
+Some available callbacks: slide 6 page 18
+cross-site request forgery (CSRF) la gi
+
+===================================
+delete: bundle exec rubocop
+
 
 1/ Macro:
 	- rails [_version_] new app_name # command to create new project with name “app_name”
@@ -7,19 +18,34 @@
 	=========
 	+ create migrate: rails generate migration CreateUsers name:string email:string
 	+ edit migrate: rails generate migration AddDetailsToUsers phone_number:string age:integer
+  + add index to column: rails generate migration add_index_to_users_email #=> doesn't auto add, we must fill in( add_index :users, :email, unique: true)
 	=======
-	+ scafford: rails generate scaffold User name:string email:string # create model User with controller, view, model ... 
+	+ scafford: rails generate scaffold User name:string email:string # create model User with controller, view, model ...
 	+ create controller: rails generate controller StaticPages home help
-	+ create model: bin/rails generate model User name:string email:string
+	+ create model: rails generate model User name:string email:string ==> ko co "s"
 	+ create resource: rails generate resource Post name:string content:text
 	+ crete healper: rails generate -h
 	=====
 	+ migrate: rails db:migrate or bundle exec rake db:migrate # migrate model
+  + edit migrate: rails generate migration add_password_digest_to_users password_digest:string
 	+ migrate to specific version: rails db:migrate VERSION=20170306120000
 	+ rollback: rails db:rollback
 	+ setp database: rails db:setup
 	+ reset database: rails db:migrate:reset
 	+ seed data: rails db:seed
+
+  =========
+  rails generate integration_test abc
+
+	=====destroy model===========
+	rails destroy model <model_name
+
+	========= destroy scaffold=========
+	rake db:rollback
+	rails destroy scaffold MyFoo
+
+
+
 2/ Sublime config:
 	Preference -> Setting User
 	SU:
@@ -65,3 +91,1215 @@
 	"trim_trailing_white_space_on_save": true
 }
 
+3/ Model:
+	presence: true # ko dc de field nil, VD:L validates :name,  presence: true
+  length: { maximum: 50 }:
+  validates :email, format: { with: /<regular expression>/ } #=> link test: http://www.rubular.com/
+  uniqueness: true #=> Unique
+  uniqueness: { case_sensitive: false } #=> check unique with lower/upper case
+  *Ex:
+    class User < ApplicationRecord
+      validates :name,  presence: true, length: { maximum: 50 }
+      VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+      validates :email, presence: true, length: { maximum: 255 },
+                        format: { with: VALID_EMAIL_REGEX },
+                        uniqueness: true
+
+                        Test cho unique hoi phuc tap:
+                          duplidate_user = @user.dup
+                          duplidate_user.email = @user.email
+                          assert @user.valid?
+                          @user.save # chi hoat dong khi save 1 trong cac du lieu: @user hoac duplidate_user
+                          assert  duplidate_user.valid?
+
+4/ Object
+  userxx = UserA
+  - update an oibject:
+    + An User object
+    + userxx.email = "new value"
+    + userxx.save
+
+  - check validate:
+    + userxx.valid?
+
+  - Get Usser:
+    + User.all
+    + User.first
+    + User.last
+
+
+  - find:
+    + find
+    + find_by(property_name: value)
+
+  + create a new User, 2 way:
+    1/ user = User.new(xxxx)
+        user.save
+    2/ User.create(xxxxxxxxxx) => auto save to DB
+
+  + delete a User
+    userxx.destroy
+
+5/ Tets:
+  rails test
+  rails test:controllers
+  rails test:models
+6/ Form:
+
+    <%= form_for(@user) do |f| %>
+      <%= f.label :name %>
+      <%= f.text_field :name %>
+
+      <%= f.label :email %>
+      <%= f.email_field :email %>
+
+      <%= f.label :password %>
+      <%= f.password_field :password %>
+
+      <%= f.label :password_confirmation, "Confirmation" %>
+      <%= f.password_field :password_confirmation %>
+
+      <%= f.submit "Create my account", class: "btn btn-primary" %>
+    <% end %>
+
+-------------
+# Ruby on Rails Tutorial Exercise Answers
+
+## Chapter 1
+
+### Section 1.1.1
+
+1. https://rubygems.org hosts the _Ruby gem_ for Ruby on Rails.
+2. The current stable version number of Rails is 5.1.4, with 5.2.0.beta2 being the overall latest version.
+3. As of this writing, Ruby on Rails has been downloaded 118,011,892 across all versions.
+
+### Section 1.3.2
+1. The current version of Ruby on my system in 2.5.0
+   (`ruby -v ` reports `ruby 2.5.0p0 (2017-12-25 revision 61468) [x86_64-darwin17]`).
+2. The current version of Rails on my system is 5.1.4.
+
+### Section 1.3.4
+1. Doing so changes the contents of the hello method to be `render html: "hola, mundo!"`.
+2. Doing so changes the contents of the hello method to be `render html: "¡Hola, mundo!"`.
+3. Doing so adds a goodbye method with the contents `render html: "goodbye, world"` and modifies the root route line in
+   `router.rb` to read `root 'application#goodbye'`.
+
+### Section 1.5.3
+1. In the current state of the project, getting the production version of the app to show "hola, mundo!" simply required
+   the text to be altered from "¡Hola, mundo!" in the `hello` method inside the application controller (remove the inverted
+   question mark and change the H in Hola to lowercase) and modifying the root route to point to the `hello` method in the
+   `ApplicationController`. After these changes had been committed, running `$ git push heroku` updated the live site with
+   these changes.
+2. Switching the root route in `routes.rb` to point back to the `goodbye` method in the application controller
+   (`application#goodbye`), committing the change, and pushing it to heroku was all that was required for this exercise.
+
+### Section 1.5.4
+1. The command to display logs is `$ heroku logs`.
+2. The most recent event was (line breaks added for readability):
+
+```
+2018-01-07T04:55:46.209028+00:00 app[web.1]: I, [2018-01-07T04:55:46.208969 #4]
+INFO -- : [11747d4f-ddad-45be-b5a5-51a288465c2e]
+Completed 200 OK in 8ms (Views: 0.9ms)
+```
+
+## Chapter 2
+
+### Section 2.2.1
+1. The CSS id for the text “User was successfully created.” is `notice`. When you refresh the browser, the text goes away.
+2. When you try to create a user with a name but no email address, the creation of the user is successful, with no email
+   address being set for the user.
+3. When you try create a user with an invalid email address, the user is successfully created with the invalid email address
+   populating the email field of the user.
+4. By default, Rails displays "User was successfully destroyed." when a user is destroyed.
+
+### Section 2.2.2
+1. The steps for visiting `/users/1/edit` are as follows:
+   1. The browser issues a request for the /users/1/edit URL.
+   2. Rails routes /users/1/edit to the edit action in the Users controller.
+   3. The edit action asks the User model to retrieve the user with an id of 1 (User.find(params[:id])).
+   4. The User model pulls the specified user from the database.
+   5. The User model returns the single users to the controller.
+   6. The controller captures the user in the @user variable, which is passed to the edit view.
+   7. The view uses embedded Ruby to render the page as HTML.
+   8. The controller passes the HTML back to the browser.
+2. The line in the scaffolding code that retrieves the user from the database is `@user = User.find(params[:id])`.
+3. The name of the view file for the user edit page is `edit.html.erb`.
+
+### Section 2.3.1
+1. The CSS id for the text “Micropost was successfully created.” is `notice`. When you refresh the browser, the text
+   goes away.
+2. When you try to create a micropost with empty content and no user id, the creation of the micropost is successful, with no
+   content or user id being set for the micropost.
+3. The micropost with the content length set to over 140 characters successfully creates.
+4. Destroying these microposts removes them and displays "Micropost was successfully destroyed." in the flash.
+
+### Section 2.3.2
+1. Microposts with a content length longer than 140 trigger a validation error and fail to create.
+2. The CSS id of the error message produced by the previous exercise is `error_explanation`.
+
+### Section 2.3.3
+1. To complete this exercise, I added the following to the bottom of `app/views/users/edit.html.erb`:
+
+   ```ruby
+   <h2>First Micropost</h2>
+   <%= @user.microposts.first.content %>
+   ```
+2. The validation error message that shows when `presence: true` is included on the Micropost's model content validation is
+   "Content can't be blank".
+3. The user model reads as follows after completing this exercise:
+ To complete this exercise, I added the following to the bottom of `app/views/users/edit.html.erb`:
+
+   ```ruby
+   class User < ApplicationRecord
+     has_many :microposts
+     validates :name, presence: true
+     validates :email, presence: true
+   end
+   ```
+
+### Section 2.3.4
+1. The line that causes ApplicationController to inherit from ActionController::Base is
+   `class ApplicationController < ActionController::Base`.
+2. The analogous file containing a line where ApplicationRecord inherits from ActiveRecord::Base is
+   `app/models/application_record.rb`:
+
+   ```ruby
+   class ApplicationRecord < ActiveRecord::Base
+     self.abstract_class = true
+   end
+   ```
+
+### Section 2.3.5
+1. Create 2nd and third users `Foo Bar (foo@bar.com)` and `Baz Quux (baz@quux.com)`.
+2. Create `Second post` and `Third post` for the first user.
+3. Confirmed that the validation from Listing 2.13 works on the production app.
+
+## Chapter 3
+
+### Section 3.1
+1. I did not use [bitbucket](https://bitbucket.org), but
+   [the page does correctly show here on GitHub](https://github.com/luskjh/sample_app).
+2. The deployment to Heroku did succeed.
+
+### Section 3.2.1
+1. Output:
+```bash
+$ rails g controller FooController bar baz
+Running via Spring preloader in process 51437
+      create  app/controllers/foo_controller_controller.rb
+      ...
+      create      app/assets/stylesheets/foo_controller.scss
+```
+2. Output:
+```bash
+$ rails d controller FooController bar baz
+Running via Spring preloader in process 51465
+      ...
+      remove      app/assets/stylesheets/foo_controller.scss
+```
+
+### Section 3.4.2
+1. Changing the `StaticPageController` tests to use the @base_title instance variable still correctly shows all tests passing.
+
+### Section 3.4.3
+1. Work for the exercise can be viewed in these two commits: [dd51f1c](https://github.com/luskjh/sample_app/commit/dd51f1c8a7911fe193bea044392af999128b1147) and [a0e388e](https://github.com/luskjh/sample_app/commit/a0e388ecb09cc2507d2ef8c45cf41313b503e036).
+
+### Section 3.4.4
+1. Work for this exercise can be viewed in this commit: [2a31cef](https://github.com/luskjh/sample_app/commit/2a31cef1dd559660034d918e25d32277497dc4e6).
+
+## Chapter 4
+
+### Section 4.2.2
+1.
+```ruby
+>> city = 'Charleston'
+=> "Charleston"
+>> state = "South Carolina"
+=> "South Carolina
+```
+2.
+```ruby
+>> puts "#{city}, #{state}"
+"Charleston, South Carolina"
+=> nil
+```
+3.
+```ruby
+>> puts "#{city}\t#{state}"
+Charleston	South Carolina
+=> nil
+```
+4.
+```ruby
+>> puts '#{city}\t#{state}'
+#{city}\t#{state}
+=> nil
+```
+
+### Section 4.2.3
+1.
+```ruby
+>> "racecar".length
+=> 7
+```
+2.
+```ruby
+>> "racecar".reverse
+=> "racecar"
+```
+3.
+```ruby
+>> s = "racecar"
+=> "racecar"
+>> s == s.reverse
+=> true
+```
+4.
+```ruby
+>> s = "onomatopoeia"
+=> "onomatopoeia"
+>> s == s.reverse
+=> false
+```
+
+### Section 4.2.4
+1.
+```ruby
+>> def palindrome_tester(s)
+>>   if s == s.reverse
+>>     puts "It's a palindrome!"
+>>   else
+>>     puts "It's not a palindrome."
+>>   end
+>> end
+```
+2.
+```ruby
+>> palindrome_tester("racecar")
+It's a palindrome!
+=> nil
+>> palindrome_tester("onomatopoeia")
+It's not a palindrome.
+=> nil
+```
+3.
+```ruby
+>> palindrome_tester("racecar").nil?
+It's a palindrome!
+=> true
+```
+
+### Section 4.3.1
+1.
+```ruby
+>> a = "A man, a plan, a canal, Panama".split(', ')
+=> ["A man", "a plan", "a canal", "Panama"]
+```
+2.
+```ruby
+>> s = a.join
+=> "A mana plana canalPanama"
+```
+3.
+```ruby
+>> s = a.join
+=> "A mana plana canalPanama"
+>> s = s.split.join
+=> "AmanaplanacanalPanama"
+>> s == s.reverse
+=> false
+>> s.downcase == s.reverse.downcase
+=> true
+```
+4.
+```ruby
+>> ('a'..'z').to_a[7]
+=> "h"
+>> ('a'..'z').to_a.reverse[7]
+=> "s"
+```
+
+### Section 4.3.2
+1.
+```ruby
+>> (0..16).each { |i| puts i ** 2 }
+0
+1
+4
+...
+256
+=> 0..16
+```
+2.
+```ruby
+>> def yeller(char_arr)
+>>   char_arr.map(&:upcase).join
+>> end
+=> :yeller
+>> yeller(['o', 'l', 'd'])
+=> "OLD"
+```
+3.
+```ruby
+>> def random_subdomain
+>>   ('a'..'z').to_a.sample(8).join
+>> end
+=> :random_subdomain
+>> random_subdomain
+=> "rsbpxjgf"
+```
+4.
+```ruby
+>> def random_subdomain
+>>   ('a'..'z').to_a.sample(8).join
+>> end
+=> :random_subdomain
+>> random_subdomain
+=> "rsbpxjgf"
+```
+
+### Section 4.3.3
+1.
+```ruby
+>> hash = { 'one' => 'uno', 'two' => 'dos', 'three' => 'tres' }
+=> {"one"=>"uno", "two"=>"dos", "three"=>"tres"}
+>> hash.each do |key, value|
+?>   puts "'#{key}' in Spanish is '#{value}'"
+>> end
+'one' in Spanish is 'uno'
+'two' in Spanish is 'dos'
+'three' in Spanish is 'tres'
+=> {"one"=>"uno", "two"=>"dos", "three"=>"tres"}
+```
+2.
+```ruby
+>> person1 = { first: "Dwayne", last: "Lusk" }
+=> {:first=>"Dwayne", :last=>"Lusk"}
+>> person2 = { first: "Susan", last: "Lusk" }
+=> {:first=>"Susan", :last=>"Lusk"}
+>> person3 = { first: "Josh", last: "Lusk" }
+=> {:first=>"Josh", :last=>"Lusk"}
+>> params = { father: person1, mother: person2, child: person3 }
+=> {:father=>{:first=>"Dwayne", :last=>"Lusk"}, :mother=>{:first=>"Susan", :last=>"Lusk"}, :child=>{:first=>"Josh", :last=>"Lusk"}}
+>> params[:father][:first]
+=> "Dwayne"
+```
+3.
+```ruby
+>> user = { name: "Josh Lusk", email: "josh@example.com", password_digest: "lybfcdsopjbcxsdf" }
+=> {:name=>"Josh Lusk", :email=>"josh@example.com", :password_digest=>"lybfcdsopjbcxsdf"}
+```
+4.
+```ruby
+>> { "a" => 100, "b" => 200 }.merge({ "b" => 300 })
+=> {"a"=>100, "b"=>300}
+```
+
+### Section 4.4.1
+1. `(0..10)` is the literal constructor for the range of integers from 1 to 10
+2. `Range.new(0, 10)` is the constructor using the `Range` class and the `new` method.
+3.
+```ruby
+>> (0..10) == Range.new(0, 10)
+=> true
+```
+
+### Section 4.4.2
+1. The class hierarchy for a range is `Range -> Class -> Module -> Object -> BasicObject`, the class hierarchy for a hash is `Hash -> Class -> Module -> Object -> BasicObject`, and the class hierarchy for a symbol is `Symbol -> Class -> Module -> Object -> BasicObject`.
+2.
+```ruby
+>> class Word < String
+>>   def palindrome?
+>>     self == reverse
+>>   end
+>> end
+=> :palindrome?
+>> Word.new('level').palindrome?
+=> true
+```
+
+### Section 4.4.3
+1.
+```ruby
+>> "racecar".palindrome?
+=> true
+>> "onomatopoeia".palindrome?
+=> false
+>> "Malayalam".downcase.palindrome?
+=> true
+```
+2.
+```ruby
+>> class String
+>>   def shuffle
+>>     self.split('').shuffle.join
+>>   end
+>> end
+=> :shuffle
+>> "foobar".shuffle
+=> "rbfooa"
+```
+3.
+```ruby
+>> class String
+>>   def shuffle
+>>     split('').shuffle.join
+>>   end
+>> end
+=> :shuffle
+>> "foobar".shuffle
+=> "oabfro"
+```
+
+### Section 4.4.4
+1.
+```ruby
+>> user = User.new
+=> #<User id: nil, name: nil, email: nil, created_at: nil, updated_at: nil>
+```
+2.
+```ruby
+user.class
+=> User(id: integer, name: string, email: string, created_at: datetime, updated_at: datetime)
+>> user.class.superclass
+=> ApplicationRecord(abstract)
+>> user.class.superclass.superclass
+=> ActiveRecord::Base
+>> user.class.superclass.superclass.superclass
+=> Object
+```
+
+### Section 4.4.5
+1.
+```ruby
+class User
+	attr_accessor :first_name, :last_name, :email
+
+	def initialize(attributes = {})
+		@first_name = attributes[:first_name]
+		@last_name = attributes[:last_name]
+		@email = attributes[:email]
+	end
+
+	def full_name
+		"#{@first_name} #{@last_name}"
+	end
+
+	def formatted_email
+		"#{full_name} <#{@email}>"
+	end
+end
+```
+2.
+```ruby
+def alphabetical_name
+   "#{@last_name}, #{@first_name}"
+end
+```
+3.
+```ruby
+>> require './example_user'
+=> true
+>> user = User.new(first_name: "Josh", last_name: "Lusk")
+=> #<User:0x00007f855acf1958 @first_name="Josh", @last_name="Lusk", @email=nil>
+>> user.full_name.split == user.alphabetical_name.split(', ').reverse
+=> true
+```
+
+## Chapter 5
+
+### Section 5.1.1
+1. `$ curl -OL cdn.learnenough.com/kitten.jpg`
+2. `$ mv kitten.jpg app/assets/images/kitten.jpg`
+3. `<%= image_tag("kitten.png", alt: "Kitten") %>`
+
+### Section 5.1.2
+1. `<%#= image_tag("kitten.jpg", alt: "Kitten") %>`
+2.
+```css
+img {
+  display: none;
+}
+```
+
+### Section 5.1.3
+1. Adding the `rails_default` partial acted as expected.
+2.
+```ruby
+StaticPagesControllerTest#test_should_get_contact:
+ActionView::Template::Error: Missing partial layouts/_rails_default with {:locale=>[:en], :formats=>[:html], :variants=>[], :handlers=>[:raw, :erb, :html, :builder, :ruby, :coffee, :jbuilder]}. Searched in:
+  * "/Users/joshualusk/Code/sample_app/app/views"
+
+```
+3. `5 runs, 9 assertions, 0 failures, 0 errors, 0 skips`
+
+### Section 5.2.4
+1. The CSS for the footer has been converted to SCSS.
+
+### Section 5.3.2
+1. `get '/help',    to: 'static_pages#help', as: 'helf'`
+2.
+```ruby
+test "should get help" do
+  get helf_path
+  assert_response :success
+  assert_select "title", "Help | #{@base_title}"
+end
+```
+3. Changes successfully reverted and tests passing.
+
+### Section 5.3.3
+1. `<li><%= link_to "Help",   helf_path %></li>`
+2. Changes successfuly reverted.
+
+### Section 5.3.4
+1.
+```erb
+<li><%= link_to "About", contact_path %></li>
+<li><%= link_to "Contact", contact_path %></li>
+```
+2.
+```ruby
+test "full title helper" do
+  assert_equal full_title,         "Ruby on Rails Tutorial Sample App"
+  assert_equal full_title("Help"), "Help | Ruby on Rails Tutorial Sample App"
+end
+```
+
+### Section 5.4.1
+1. In `config/routes.rb`:
+```ruby
+get 'users/new', as: 'signup'
+```
+In `test/controllers/users_controller_test.rb`:
+```ruby
+test "should get new" do
+  get signup_path
+  assert_response :success
+end
+```
+2. The temporary `config/routes.rb` change does allow the tests to pass.
+
+### Section 5.4.2
+1. I did solve the exercise in Section 5.4.1.1.
+2. Test verified to work by commenting out `/signup` route.
+3.
+```ruby
+get signup_path
+assert_select "title", full_title("Sign up")
+```
+
+## Chapter 6
+
+### Section 6.1.1
+1. `db/schema.db` contains a similar `create_table` command to the migration file, along with other lines of code:
+```ruby
+ActiveRecord::Schema.define(version: 20180117172914) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "users", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+end
+```
+2. Code contents of `db/schema.db` after running `$ rails db:rollback`:
+```ruby
+ActiveRecord::Schema.define(version: 0) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+end
+```
+3. After running `$ rails db:migrate`, `db/schema.rb` looks the same as listed in exercise 1.
+
+### Section 6.1.2
+1.
+```ruby
+>> user = User.new
+=> #<User id: nil, name: nil, email: nil, created_at: nil, updated_at: nil>
+>> user.class
+=> User(id: integer, name: string, email: string, created_at: datetime, updated_at: datetime)
+>> user.class.superclass
+=> ApplicationRecord(abstract)
+```
+2.
+```ruby
+>> user.class.superclass.superclass
+=> ActiveRecord::Base
+```
+
+### Section 6.1.3
+1.
+```ruby
+>> user.name.class
+=> String
+>> user.email.class
+=> String
+```
+2.
+```ruby
+>> user.created_at.class
+=> ActiveSupport::TimeWithZone
+>> user.updated_at.class
+=> ActiveSupport::TimeWithZone
+```
+
+### Section 6.1.4
+1.
+```ruby
+>> User.find_by(name: 'Josh Lusk')
+  User Load (0.4ms)  SELECT  "users".* FROM "users" WHERE "users"."name" = $1 LIMIT $2  [["name", "Josh Lusk"], ["LIMIT", 1]]
+=> #<User id: 1, name: "Josh Lusk", email: "josh@example.com", created_at: "2018-01-17 17:52:01", updated_at: "2018-01-17 17:52:01">
+>> User.find_by_name('Josh Lusk')
+  User Load (0.4ms)  SELECT  "users".* FROM "users" WHERE "users"."name" = $1 LIMIT $2  [["name", "Josh Lusk"], ["LIMIT", 1]]
+=> #<User id: 1, name: "Josh Lusk", email: "josh@example.com", created_at: "2018-01-17 17:52:01", updated_at: "2018-01-17 17:52:01">
+```
+2.
+```ruby
+>> User.all.class
+=> User::ActiveRecord_Relation
+```
+3.
+```ruby
+>> User.all.length
+  User Load (0.5ms)  SELECT "users".* FROM "users"
+=> 2
+```
+
+### Section 6.1.5
+1.
+```ruby
+>> user.name = "Josh Lusk"
+=> "Josh Lusk"
+>> user.save
+   (0.3ms)  SAVEPOINT active_record_1
+  SQL (0.5ms)  UPDATE "users" SET "name" = $1, "updated_at" = $2 WHERE "users"."id" = $3  [["name", "Josh Lusk"], ["updated_at", "2018-01-17 18:09:58.956613"], ["id", 1]]
+   (0.2ms)  RELEASE SAVEPOINT active_record_1
+=> true
+```
+2.
+```ruby
+>> user.update_attributes(email: 'josh@example.com')
+   (0.3ms)  SAVEPOINT active_record_1
+  SQL (0.5ms)  UPDATE "users" SET "email" = $1, "updated_at" = $2 WHERE "users"."id" = $3  [["email", "josh@example.com"], ["updated_at", "2018-01-17 18:10:25.000923"], ["id", 1]]
+   (0.2ms)  RELEASE SAVEPOINT active_record_1
+=> true
+```
+3.
+```ruby
+>> user.created_at = 1.year.ago
+=> Tue, 17 Jan 2017 18:10:51 UTC +00:00
+>> user.save
+   (0.3ms)  SAVEPOINT active_record_1
+  SQL (0.6ms)  UPDATE "users" SET "created_at" = $1, "updated_at" = $2 WHERE "users"."id" = $3  [["created_at", "2017-01-17 18:10:51.168168"], ["updated_at", "2018-01-17 18:10:53.677700"], ["id", 1]]
+   (0.3ms)  RELEASE SAVEPOINT active_record_1
+=> true
+```
+
+### Section 6.2.1
+1.
+```ruby
+>> User.new(name: "Example User", email: "user@example.com").valid?
+=> true
+```
+2.
+```ruby
+>> User.new.valid?
+=> true
+```
+
+### Section 6.2.2
+1.
+```ruby
+>> u = User.new
+=> #<User id: nil, name: nil, email: nil, created_at: nil, updated_at: nil>
+>> u.valid?
+=> false
+>> u.errors.full_messages
+=> ["Name can't be blank", "Email can't be blank"]
+```
+2.
+```ruby
+>> u.errors.messages
+=> {:name=>["can't be blank"], :email=>["can't be blank"]}
+>> u.errors.messages.class == Hash
+=> true
+>> u.errors[:email]
+=> ["can't be blank"]
+```
+
+### Section 6.2.3
+1.
+```ruby
+>> user = User.new(name: "a" * 51, email: "a" * 244 + "@example.com")
+=> #<User id: nil, name: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa...", email: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa...", created_at: nil, updated_at: nil>
+>> user.valid?
+=> false
+```
+2.
+```ruby
+>> user.errors.full_messages
+=> ["Name is too long (maximum is 50 characters)", "Email is too long (maximum is 255 characters)"]
+```
+
+### Section 6.2.4
+1. ![rubular](https://gist.github.com/luskjh/b1d8f8f63da6751f65e8f3e8f0a6c01a/raw/6d5907bbdf24e7edff1e27c1223e3997710bb20e/rubular.png)
+2.
+```bash
+$ rails test:models
+Started with run options --seed 41153
+
+Run options: --seed 41153--=---=---=---=---=--] 0% Time: 00:00:00,  ETA: ??:??:??
+
+# Running:
+
+.....  7/6: [===============================      ] 85% Time: 00:00:00,  ETA: 00:.  7/7: [====================================] 100% Time: 00:00:00, Time: 00:00:00
+.
+Finished in 0.04103s
+7 tests, 16 assertions, 0 failures, 0 errors, 0 skips
+
+
+
+Finished in 0.054347s, 128.8020 runs/s, 294.4045 assertions/s.
+7 runs, 16 assertions, 0 failures, 0 errors, 0 skips
+```
+3. ![rubular](https://gist.github.com/luskjh/b1d8f8f63da6751f65e8f3e8f0a6c01a/raw/920ccbd4e808b4bbfb244156e06e38947f53f174/rubular_2.png)
+
+### Section 6.2.5
+1. Solution presented in **Listing 6.33**.
+2. The `before_save` callback can be written as `before_save { email.downcase! }` to modify the email attribute directly.
+
+### Section 6.3.2
+1.
+```ruby
+>> user = User.new(name: "Example User", email: "user@example.com")
+=> #<User id: nil, name: "Example User", email: "user@example.com", created_at: nil, updated_at: nil, password_digest: nil>
+>> user.valid?
+  User Exists (1.6ms)  SELECT  1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER($1) LIMIT $2  [["email", "user@example.com"], ["LIMIT", 1]]
+=> false
+```
+2.
+```ruby
+>> user.errors.full_messages
+=> ["Password can't be blank"]
+>>
+```
+### Section 6.3.3
+1.
+```ruby
+>> user = User.new(name: "Example User", email: "user@example.com", password: "a" * 5, password_confirmation: "a" * 5)
+=> #<User id: nil, name: "Example User", email: "user@example.com", created_at: nil, updated_at: nil, password_digest: "$2a$10$2YbdzqoPAuIralVqoHzaBO.PfPqA2547P.UxMYgEy9D...">
+>> user.valid?
+  User Exists (0.6ms)  SELECT  1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER($1) LIMIT $2  [["email", "user@example.com"], ["LIMIT", 1]]
+=> false
+```
+2.
+```ruby
+>> user.errors.full_messages
+=> ["Password is too short (minimum is 6 characters)"]
+```
+
+### Section 6.3.4
+1.
+```ruby
+>> user = User.find_by(email: "jlusk@example.com")
+  User Load (0.5ms)  SELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT $2  [["email", "jlusk@example.com"], ["LIMIT", 1]]
+=> #<User id: 6, name: "Josh Lusk", email: "jlusk@example.com", created_at: "2018-01-17 20:30:34", updated_at: "2018-01-17 20:30:34", password_digest: "$2a$10$PzRIAXrzLt7r22udGGJIAefVk7I.6VMXnuWc62mX2Th...">
+```
+2. The call to `save` did not work because the validations around the `password` virtual attribute were not met.
+```ruby
+>> user.name = "Josh H. Lusk"
+=> "Josh H. Lusk"
+>> user.save
+   (0.3ms)  BEGIN
+  User Exists (0.6ms)  SELECT  1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER($1) AND ("users"."id" != $2) LIMIT $3  [["email", "jlusk@example.com"], ["id", 6], ["LIMIT", 1]]
+   (0.2ms)  ROLLBACK
+=> false
+>> user.errors.full_messages
+=> ["Password can't be blank", "Password is too short (minimum is 6 characters)"]
+```
+3.
+```ruby
+>> user.update_attribute(:name, "Josh H. Lusk")
+   (0.3ms)  BEGIN
+  SQL (0.7ms)  UPDATE "users" SET "name" = $1, "updated_at" = $2 WHERE "users"."id" = $3  [["name", "Josh H. Lusk"], ["updated_at", "2018-01-17 20:39:54.809455"], ["id", 6]]
+   (2.3ms)  COMMIT
+=> true
+```
+
+## Chapter 7
+
+# Section 7.1.1
+1. The controller and action of the params hash for `/about` are `static_pages` and `about`, respectively.
+2.
+```ruby
+>> user = User.first
+  User Load (0.5ms)  SELECT  "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT $1  [["LIMIT", 1]]
+=> #<User id: 1, name: "Example User", email: "user@example.com", created_at: "2018-01-21 04:05:46", updated_at: "2018-01-21 04:05:46", password_digest: "$2a$10$Nzw7IByN9Y23cUP3zPf/SOpcGTvPoOlN.eYPlF2ayRY...">
+>> puts user.attributes.to_yaml
+---
+id: 1
+name: Example User
+email: user@example.com
+created_at: !ruby/object:ActiveSupport::TimeWithZone
+  utc: &1 2018-01-21 04:05:46.891622000 Z
+  zone: &2 !ruby/object:ActiveSupport::TimeZone
+    name: Etc/UTC
+  time: *1
+updated_at: !ruby/object:ActiveSupport::TimeWithZone
+  utc: &3 2018-01-21 04:05:46.891622000 Z
+  zone: *2
+  time: *3
+password_digest: "$2a$10$Nzw7IByN9Y23cUP3zPf/SOpcGTvPoOlN.eYPlF2ayRYPL6tgpfnje"
+=> nil
+>> y user.attributes
+---
+id: 1
+name: Example User
+email: user@example.com
+created_at: !ruby/object:ActiveSupport::TimeWithZone
+  utc: &1 2018-01-21 04:05:46.891622000 Z
+  zone: &2 !ruby/object:ActiveSupport::TimeZone
+    name: Etc/UTC
+  time: *1
+updated_at: !ruby/object:ActiveSupport::TimeWithZone
+  utc: &3 2018-01-21 04:05:46.891622000 Z
+  zone: *2
+  time: *3
+password_digest: "$2a$10$Nzw7IByN9Y23cUP3zPf/SOpcGTvPoOlN.eYPlF2ayRYPL6tgpfnje"
+=> nil
+```
+
+### Section 7.1.2
+1.
+```erb
+<%= @user.name %>, <%= @user.email %> <br>
+Created at <%= @user.created_at %>, updated last at <%= @user.updated_at %>.
+```
+2. Refreshing the browser with the time code embedded (see below) reevaluates/redisplays the current time.
+```erb
+<%= @user.name %>, <%= @user.email %> <br>
+Created at <%= @user.created_at %>, updated last at <%= @user.updated_at %>. <br>
+Current Time: <%= Time.now %>.
+```
+
+### Section 7.1.3
+1. Displaying the `params` hash as YAML (see below) looks exactly the same as the debug output in the HTML.
+```
+Started GET "/users/1" for 127.0.0.1 at 2018-01-20 23:20:03 -0500
+Processing by UsersController#show as HTML
+  Parameters: {"id"=>"1"}
+  User Load (0.2ms)  SELECT  "users".* FROM "users" WHERE "users"."id" = $1 LIMIT $2  [["id", 1], ["LIMIT", 1]]
+Return value is: nil
+
+[1, 10] in /Users/joshualusk/environment/sample_app/app/controllers/users_controller.rb
+    1: class UsersController < ApplicationController
+    2:
+    3: 	def show
+    4: 		@user = User.find(params[:id])
+    5: 		debugger
+=>  6: 	end
+    7:
+    8:   def new
+    9:   end
+   10: end
+(byebug) puts params.to_yaml
+--- !ruby/object:ActionController::Parameters
+parameters: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+  controller: users
+  action: show
+  id: '1'
+permitted: false
+nil
+```
+2.
+```
+Started GET "/users/new" for 127.0.0.1 at 2018-01-20 23:22:43 -0500
+Processing by UsersController#new as HTML
+Return value is: nil
+
+[1, 10] in /Users/joshualusk/environment/sample_app/app/controllers/users_controller.rb
+    1: class UsersController < ApplicationController
+    2:
+    3: 	def show
+    4: 		@user = User.find(params[:id])
+    5: 	end
+    6:
+    7:   def new
+    8:   	debugger
+=>  9:   end
+   10: end
+(byebug) @user
+nil
+```
+
+### Section 7.1.4
+1. The MD5 hash associated with the image for my gravatar email address is [a61b37d367dff8110f986469327d1cc4](https://secure.gravatar.com/avatar/a61b37d367dff8110f986469327d1cc4).
+2. The code in listing `7.12` does correctly manipulate the size of the image based on the keyword argument.
+3. The code in listing `7.13` is confirmed to be able to be used in place of the code in listing `7.12`.
+
+### Section 7.2.1
+1.
+```ruby
+undefined method `nome' for #<User:0x00007f82d2cf2220>
+Did you mean?  name
+```
+2. `foobar` would be a bad choice for the block variable (currently `f`) because while `f` can me mapped to `form` as a good shorthand variable, `foobar` is simply a placeholder word that in no way relates to `form`.
+
+### Section 7.2.2
+1. [*Learn Enough HTML to be Dangerous*](http://learnenough.com/html-tutorial) does not include a server-side component that, in most simple examples, would be required to demonstrate the function of a `form` tag.
+
+### Section 7.3.2
+1. Debug information (from `/signup?admin=1` path) displayed below:
+```
+--- !ruby/object:ActionController::Parameters
+parameters: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+  admin: '1'
+  controller: users
+  action: new
+permitted: false
+```
+
+### Section 7.3.3
+1. Chaing the minum password length to 5 updates the error message to read: `Password is too short (minimum is 5 characters)`.
+2. We've pointed the `signup` route to `users#new`, but the call to render the `new` view from the `create` action results in the path being `/users` (see **Table 7.1**).
+
+### Section 7.3.4
+1.
+```ruby
+test "invalid signup information" do
+  get signup_path
+  assert_no_difference 'User.count' do
+  post users_path, params: { user: { name: "",
+                                     email: "user@invalid",
+                                     password:              "foo",
+                                     password_confirmation: "bar" } }
+  end
+  assert_template 'users/new'
+  assert_select 'div#error_explanation'
+  assert_select 'div.alert.alert-danger'
+  assert_select "li", "Name can't be blank"
+  assert_select "li", "Email is invalid"
+  assert_select "li", "Password confirmation doesn't match Password"
+  min_validation = User.validators_on(:password).find do |v|
+    v.options.key?(:minimum)
+  end
+  min_length = min_validation.options[:minimum]
+  assert_select "li", "Password is too short (minimum is #{min_length} characters)"
+end
+```
+2. The tests are still green because pointing `post /signup` to `users#create` just add *another way to navigate to that route*, it does not invalidate the use of `post /users` as a means to trigger the `users#create` action.
+3. The tests are still green aftering modifying the `new.html.erb` users view to match **Listing 7.2.6**.
+4. Adding `assert_select 'form[action="/signup"]'` as the second assertion in the `users_signup` integration test helps verify that the sign up form is `POST`ing to the `/signup` route, not the `/users` route.
+
+### Section 7.4.1
+1.
+```ruby
+>> user = User.find(2) # User created on form submission (2nd overall user)
+  User Load (0.5ms)  SELECT  "users".* FROM "users" WHERE "users"."id" = $1 LIMIT $2  [["id", 2], ["LIMIT", 1]]
+=> #<User id: 2, name: "Josh Lusk", email: "jlusk@example.com", created_at: "2018-01-21 21:06:43", updated_at: "2018-01-21 21:06:43", password_digest: "$2a$10$7jQSCRZ4z8h0eBRnqWYk5.8r4ZFzUKuYvFylU/gxCVt...">
+>> user.attributes
+=> {"id"=>2, "name"=>"Josh Lusk", "email"=>"jlusk@example.com", "created_at"=>Sun, 21 Jan 2018 21:06:43 UTC +00:00, "updated_at"=>Sun, 21 Jan 2018 21:06:43 UTC +00:00, "password_digest"=>"$2a$10$7jQSCRZ4z8h0eBRnqWYk5.8r4ZFzUKuYvFylU/gxCVt0ypb6DRime"}
+```
+2. Verified that by updating **Listing 7.28** and submitting a valid user that `redirect_to user_url(@user)` has the same effect as `redirect_to @user`.
+
+### Section 7.4.2
+1.
+```ruby
+>> "#{:success}"
+=> "success"
+```
+2. The section of the flash iteration that sets the class names for the `div` could be rewritten as follows:
+```erb
+<div class="<%= "alert alert-#{message_type}" %>">
+```
+
+### Section 7.4.3
+1. Verified the user was successfully created as in **Listing 7.32**.
+2. Verified that the Gravatar correctly appear for a new user created with my personal email address.
+
+### Section 7.4.4
+1. The line `assert_not flash.empty?` was added to the bottom of the signup validity test.
+2. All tests still pass after implementing the change in **Listing 7.35**.
+3. The tests do fail when the `redirect_to` line in commented out of the User controller's `create` method (action).
+4. If `@user.save` is returning false, most likely the validations are catching incorrect user information that is trying to be saved (triggered when `User.count` is not one more that it was before).
+
+### Section 7.5.3
+1. The SSL lock and https appear in next to the URL in my [heroku app](https://afternoon-scrubland-91011.herokuapp.com/).
+2. My gravatar does appear correctly on the production site.
+
+## Chapter 8
+
+### Section 8.1.1
+1. `GET login_path` routes to the Sessions Controller's `show` action and `POST login_path` routes to the Sessions Controller's 'create` action.
+2.
+```bash
+$ rails routes | grep 'users#'
+   signup GET    /signup(.:format)         users#new
+          POST   /signup(.:format)         users#create
+    users GET    /users(.:format)          users#index
+          POST   /users(.:format)          users#create
+ new_user GET    /users/new(.:format)      users#new
+edit_user GET    /users/:id/edit(.:format) users#edit
+     user GET    /users/:id(.:format)      users#show
+          PATCH  /users/:id(.:format)      users#update
+          PUT    /users/:id(.:format)      users#update
+          DELETE /users/:id(.:format)      users#destroy
+$ rails routes | grep 'sessions#'
+    login GET    /login(.:format)          sessions#new
+          POST   /login(.:format)          sessions#create
+   logout DELETE /logout(.:format)         sessions#destroy
+$ rails routes | grep 'users#' | wc -l
+      10
+$ rails routes | grep 'sessions#' | wc -l
+       3
+```
+
+### Section 8.1.2
+1. Because we addded the key `:url` to the `form_for`'s hash with the value `login_path`, the path the URL will be posting to is `/login`. in `config/routes.rb`, this path is routed to go to the `create` action in the sessions controller.
+
+### Section 8.1.3
+1.
+```ruby
+>> user = nil
+=> nil
+>> !!(user && user.authenticate('foobar'))
+=> false
+>> user = User.first
+  User Load (0.7ms)  SELECT  "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT $1  [["LIMIT", 1]]
+=> #<User id: 6, name: "Josh H. Lusk", email: "jlusk@example.com", created_at: "2018-01-17 20:30:34", updated_at: "2018-01-17 20:39:54", password_digest: "$2a$10$PzRIAXrzLt7r22udGGJIAefVk7I.6VMXnuWc62mX2Th...">
+>> !!(user && user.authenticate('foobaz'))
+=> false
+>> !!(user && user.authenticate('foobar'))
+=> true
+```
+
+### Section 8.1.4
+1. Verified that the flash message disappears when you click on a second page, away from the login view.
+
+### Section 8.2.1
+1. Found using Edit My Cookie Chrome Extension:
+![session token](https://gist.github.com/luskjh/b1d8f8f63da6751f65e8f3e8f0a6c01a/raw/381517d803c36e4f471a9cf8919883211f4d48ea/session_token.png)
+2. 22/01/2019 4:24PM is the `expire` time on the session token
+
+### Section 8.2.2
+1.
+```ruby
+>> User.find_by(id: 1000)
+  User Load (0.4ms)  SELECT  "users".* FROM "users" WHERE "users"."id" = $1 LIMIT $2  [["id", 1000], ["LIMIT", 1]]
+=> nil
+```
+2. Specifically note that no SQL is executed on the last `||=` used in conjunction with `@current_user`:
+```ruby
+>> session = {}
+=> {}
+>> session[:user_id] = nil
+=> nil
+>> @current_user ||= User.find_by(id: session[:user_id])
+  User Load (0.4ms)  SELECT  "users".* FROM "users" WHERE "users"."id" IS NULL LIMIT $1  [["LIMIT", 1]]
+=> nil
+>> session[:user_id] = User.first.id
+  User Load (0.3ms)  SELECT  "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT $1  [["LIMIT", 1]]
+=> 1
+>> @current_user ||= User.find_by(id: session[:user_id])
+  User Load (0.5ms)  SELECT  "users".* FROM "users" WHERE "users"."id" = $1 LIMIT $2  [["id", 1], ["LIMIT", 1]]
+=> #<User id: 1, name: "Rails Tutorial", email: "example@railstutorial.org", created_at: "2018-01-21 21:24:43", updated_at: "2018-01-21 21:24:43", password_digest: "$2a$10$pYeW./EatWhQgNsFlkE1nOIlUmjLPu9IjBLxQAYfjce...">
+>> @current_user ||= User.find_by(id: session[:user_id])
+=> #<User id: 1, name: "Rails Tutorial", email: "example@railstutorial.org", created_at: "2018-01-21 21:24:43", updated_at: "2018-01-21 21:24:43", password_digest: "$2a$10$pYeW./EatWhQgNsFlkE1nOIlUmjLPu9IjBLxQAYfjce...">
+```
+
+### Section 8.2.3
+1.
+![delete session](https://gist.github.com/luskjh/b1d8f8f63da6751f65e8f3e8f0a6c01a/raw/966a633207a52675018dfb0bc3a86eb10818fa03/delete_session.gif)
+2.
+![delete session on quit](https://gist.github.com/luskjh/b1d8f8f63da6751f65e8f3e8f0a6c01a/raw/f4c734af74f61cc6d440b23a62fe33a4d9beee7e/delete_session_on_quit.gif)
+
+### Section 8.2.4
+1. Removing the `!` from the line !current_user.nil? (within the `logged_in?` method) does cause the tests in `test/integration/users_login_test.rb` to fail.
+2. The tests again path when the `!` is reinstated.
+
+### Section 8.2.5
+1. The test suite become red if you comment out the `log_in` line in **Listing 8.25**.
+2. The test suite is confirmed to toggle between red and green based on whether or not the `log_in` line in **Listing 8.24** is commented out or not.
+
+### Section 8.3
+1. Verified that the logout link works as expected. Once the redirect happens, the Account drop-down is replaced by the Log in link, which is what gets asserted in the last three lines of the test.
+2. The session is correctly removed after logging out.
+
+## Chapter 9
+1.
+```ruby
+>> user = User.first
+  User Load (0.5ms)  SELECT  "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT $1  [["LIMIT", 1]]
+=> #<User id: 1, name: "Rails Tutorial", email: "example@railstutorial.org", created_at: "2018-01-21 21:24:43", updated_at: "2018-01-21 21:24:43", password_digest: "$2a$10$pYeW./EatWhQgNsFlkE1nOIlUmjLPu9IjBLxQAYfjce...", remember_digest: nil>
+>> user.remember
+   (0.3ms)  BEGIN
+  SQL (51.2ms)  UPDATE "users" SET "updated_at" = $1, "remember_digest" = $2 WHERE "users"."id" = $3  [["updated_at", "2018-01-29 04:39:23.382813"], ["remember_digest", "$2a$10$WautEzRlvGWz2WyiRA6ukOkO5ddMAJt4Kr6zblyA.veO8re/LvctW"], ["id", 1]]
+   (0.6ms)  COMMIT
+=> true
+>> user.remember_token
+=> "iNlGdGeybz9yzt90jLPONA"
+>> user.remember_digest
+=> "$2a$10$WautEzRlvGWz2WyiRA6ukOkO5ddMAJt4Kr6zblyA.veO8re/LvctW"
+```
+2. Both methods (outlined in **Listing 9.4** and **Listing 9.5** work correctly.
+
+### Section 9.1.2
+1. ![token and user id](https://gist.github.com/luskjh/b1d8f8f63da6751f65e8f3e8f0a6c01a/raw/6c24eeafdab8e8b86db68aaff14907731102a8a0/token_and_user_id.png)
+2.
+```ruby
+>> user = User.first
+  User Load (0.5ms)  SELECT  "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT $1  [["LIMIT", 1]]
+=> #<User id: 1, name: "Rails Tutorial", email: "example@railstutorial.org", created_at: "2018-01-21 21:24:43", updated_at: "2018-01-29 04:55:49", password_digest: "$2a$10$pYeW./EatWhQgNsFlkE1nOIlUmjLPu9IjBLxQAYfjce...", remember_digest: "$2a$10$2pVtFKovRYJDn5QrWXh6jeMXfwuCxrGq40pt7S/ckeE...">
+>> user.authenticated?('notokenyet')
+=> false
+>> user.remember
+   (0.3ms)  BEGIN
+  SQL (0.6ms)  UPDATE "users" SET "updated_at" = $1, "remember_digest" = $2 WHERE "users"."id" = $3  [["updated_at", "2018-01-29 04:59:40.255900"], ["remember_digest", "$2a$10$9jvDJhDMEG2mh9OfLx5E2O2g8JQSialxY1YYah8GJdqxeHOcfs1.q"], ["id", 1]]
+   (0.8ms)  COMMIT
+=> true
+>> user.authenticated?(user.remember_token)
+=> true
+>>
+```
+
+### Section 9.1.3
+1. ![remember cookies removed](https://gist.github.com/luskjh/b1d8f8f63da6751f65e8f3e8f0a6c01a/raw/821d39729453de7e0719670c6327bcc4afca5e2d/10_remember_cookies_removed.gif)
+
+### Section 9.1.4
+1. ![double logout error](https://gist.github.com/luskjh/b1d8f8f63da6751f65e8f3e8f0a6c01a/raw/9d3471528c4e16b0d06c1dc68f8a758ddaa12073/11_double_logout_error.png)
+2. ![double browser logout error](https://gist.github.com/luskjh/b1d8f8f63da6751f65e8f3e8f0a6c01a/raw/ddf8d49d4cf788767ad6aaf424269d76044492e0/12_double_browser_logout_error.png)
+3. Uncommenting the fixes does change the test suite from red to green:
+```ruby
+Finished in 0.54743s
+24 tests, 68 assertions, 0 failures, 0 errors, 0 skips
+...
+Finished in 0.578573s, 41.4814 runs/s, 117.5305 assertions/s.
+24 runs, 68 assertions, 0 failures, 0 errors, 0 skips
+```
+
+### Section 9.2
+1. The checkbox is having its intended effect; checking it adds both a `remember_token` and a `user_id` cookie to the browser, and not checking it adds neither.
+2.
+```ruby
+>> 1 == 2 ? 'no way' : 'phew!'
+=> "phew!"
+>> 2 == 2 ? 'that\'s better' : 'not gonna happen'
+=> "that's better"
+```
+
+### Section 9.3.2
+1. The test fails with the `authenticated?` part of the expression removed:
+```ruby
+Failure:
+SessionsHelperTest#test_current_user_returns_nil_when_remember_digest_is_wrong [/Users/joshualusk/environment/sample_app/test/helpers/sessions_helper_test.rb:17]:
+Expected #<User id: 208889123, name: "Foo Bar", email: "foo@bar.com", created_at: "2018-02-03 15:42:48", updated_at: "2018-02-03 15:42:48", password_digest: "$2a$04$vpjPuDJWYiardb28TO1/yet4Tx6XudLZ.rjnrhDAEDK...", remember_digest: "$2a$04$pMwZWHcZ8RtD7o5M13M6ielnjUKyCf0P/.GvKlRqVK5..."> to be nil.
+```
