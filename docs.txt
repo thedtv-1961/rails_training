@@ -5,8 +5,30 @@ Model lifecycle trong slide 6 co noi, update_attributes vs update_attribute, Fin
 index trong sql, 1 talbe dc tao bao nhieu index???
 Some available callbacks: slide 6 page 18
 cross-site request forgery (CSRF) la gi
-ten cac memthods test trong rails
+thực ra biến user/ session trong view và controller ko có liên quian vs nhau : params.require(:user).permit(:email, :password), tìm hiểu xem liệu có liên quan vs nhauy hay khong, -> da ttest thu 1 truong hop: goi tu session login ra new user no bi loi
 
+
+
+ Returns the hash digest of the given string.
+  def User.digest(string)
+    cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
+                                                  BCrypt::Engine.cost
+    BCrypt::Password.create(string, cost: cost)
+  end
+
+  # Returns a random token.
+  def User.new_token
+    SecureRandom.urlsafe_base64
+  end
+
+
+ aaa ||= 222: neu aaa == nil thi gan = 222 con neu != nil thi ko gan
+===============BEFORE CCOMMIT====================
+- rubocop
+- rubice
+- *test
+- I18n
+- gem config dynamic
 ===================================
 delete: bundle exec rubocop
 
