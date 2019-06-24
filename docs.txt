@@ -53,9 +53,13 @@ cross-site request forgery (CSRF) la gi
   + setp database: rails db:setup
   + reset database: rails db:migrate:reset
   + seed data: rails db:seed
-
-  =========
-  rails generate integration_test abc
+  
+  
+  =====reset DB===========
+  
+  rails db:migrate:reset
+  =====add columns from seed===========
+  rails db:seed
 
   =====destroy model===========
   rails destroy model <model_name
