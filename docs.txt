@@ -1,11 +1,8 @@
 ??????????????????
 class inherit conmtroller, moidel, test, ... coi chpter3,4,5 co 2 cai hinh
-terminal on macos to 1 form many tabs
 Model lifecycle trong slide 6 co noi, update_attributes vs update_attribute, Find vs Find_by
-index trong sql, 1 talbe dc tao bao nhieu index???
 Some available callbacks: slide 6 page 18
 cross-site request forgery (CSRF) la gi
-thực ra biến user/ session trong view và controller ko có liên quian vs nhau : params.require(:user).permit(:email, :password), tìm hiểu xem liệu có liên quan vs nhauy hay khong, -> da ttest thu 1 truong hop: goi tu session login ra new user no bi loi
 
 
 
