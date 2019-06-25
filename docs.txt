@@ -30,6 +30,13 @@ cross-site request forgery (CSRF) la gi
 */ delete: bundle exec rubocop
 */ helpers chỉ dùng đc trong controller và views ko dùng trong model
 
+
+I > RUBY
+- Metaprograming: Ham send sẽ thực thi một phương thức; còn call sẽ thực thi một đoạn mã cụ thể
+
+
+
+II > RAILS
 1/ Macro:
   - rails [_version_] new app_name # command to create new project with name “app_name”
   ➢ bundle install # install all gem in project
