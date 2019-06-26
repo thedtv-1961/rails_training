@@ -1,3 +1,53 @@
+*/ Cung cấp bởi Ruby
+  1/ nil?
+    Có thể sử dụng trên bất kỳ đối tượng nào
+    Sẽ chỉ trả về true khi thực sự là nil. Ví dụ:
+  2/ Empty?
+    chỉ sử dụng trên các đối tượng dạng tập hợp(collection) như Hash, Array, Set
+    Phương thức sẽ trả về true khi tập hợp không có phần tử nào
+
+*/ Cung cap boi Rails, dung dc cho tat ca cac object
+  1/ blank?
+    nil và false
+
+  2/ present?
+    ngc lai blank?
+
+nil, false, empty
+
+
+cai cookies[:user_id] ko thay dung den
+
+chapter 13 ko hieu cai nay:
+user.microposts.create!(arg)  Creates a micropost associated with user (exception on failure
+
+
+dependent :destroy la gif, thay giong on delete cascadepp
+cac ham tim nhu ago ....
+
+any? la gi
+
+
+hoc thuoc cac phuong thuc references nhu :
+  user.microposts.create
+  user.microposts.create! ....
+
+  flash.now la gif
+
+  <%= render "layouts/shared/error_messages", object: f.object %> : f.object la cai gif, vs lai cai template nay la cua @user
+
+  @micropost = current_user.microposts.build trong home cua static page
+
+request.referrer la gif
+upload hinh
+
+
+
+
+
+
+
+
 ??????????????????
 class inherit conmtroller, moidel, test, ... coi chpter3,4,5 co 2 cai hinh
 Model lifecycle trong slide 6 co noi, update_attributes vs update_attribute, Find vs Find_by
