@@ -20,6 +20,9 @@ cross-site request forgery (CSRF) la gi
 ????????????????????????
 
  aaa ||= 222: neu aaa == nil thi gan = 222 con neu != nil thi ko gan
+ 
+===============DEPLAY APP ON HEROKU====================
+ 
 ===============BEFORE CCOMMIT====================
 - rubocop
 - rubice
