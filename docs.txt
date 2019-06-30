@@ -1,3 +1,34 @@
+dependent:
+	destroy (nen chon, co callback)
+	delete_allko co callback
+	nullify: record lien ket ko b xoa
+	Restrict: ko cho xoa cac record phu thuoc, :restrict_with_exceptions | restrict
+
+Any, exists, blank, empty
+	empty? and blank? trả về true nếu một quan hệ trả về 0 bản ghi.
+	any? and exists? trả true nếu một quan hệ trả về ít nhất một bản ghi.
+
+	any: check theo kieu "*" trong CSDL
+		truyen vao dk check: tuy van tat ca trong CSDL 
+		ko tryuen vao dk  check: thi se~ .empty? du lieu da dc load trc do
+	exists: chi check 1 ban ghi trong CSDL
+
+Flash
+	.now dung cho render, current action
+	chi co trong next request, redirect_to
+
+===================
+fix code va dua len heroku
+test thu cach custom error txt
+
+create ha build
+
+
+
+
+
+
+
 */ Cung cấp bởi Ruby
   1/ nil?
     Có thể sử dụng trên bất kỳ đối tượng nào
